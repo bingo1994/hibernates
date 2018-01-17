@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--该文件要清楚地表述出 类 和 表 的对应关系-->
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+	
+	<!-- package : 表示该类在哪个包下 -->
+	<hibernate-mapping package="com.test.domain">
+	
+	<!-- name : 表示类名 table 表示 该类和哪个表映射 -->
+	<class name="Course" table="course">
+	<!-- id元素专门用于指定主键是如何生成,hibernate设计者认为，我们每一个表都应该有一个主键 -->
+		<id name="cid" type="java.lang.Integer"><!-- name:表示类的哪个属性是主键 -->
+		<generator class="sequence"><!-- 指定主键生成策略 -->
+		<param name="sequence">course_seq</param><!--emp_seq是指序列名称  -->
+		</generator>
+		</id>
+		
+	<property name="cname" type="java.lang.String">
+	<column name="cname" not-null="true" />
+	</property>
+	
+	<property name="ccredit" type="java.lang.Integer">
+	<column name="ccredit" not-null="true"/>
+	</property>
+	
+	
+	<!-- 一对多 -->
+	<set name="stuCourse" inverse="true">
+	<key>
+	<column name="cid" precision="22" scale="0"/>
+	</key>
+	<one-to-many class="com.test.domain.StudCourse"/>	
+	</set>
+	</class>
+	</hibernate-mapping>

@@ -1,0 +1,125 @@
+主要是学习hql语句：
+sql 面向数据库表查询
+hql 面向对象查询
+hql ： from 后面跟的 类名＋类对象 where 后 用 对象的属性做条件
+sql： from 后面跟的是表名 where 后 用表中字段做条件
+
+
+如果我们返回的是一列数据,这时我们的取法是直接取出list->object 而不是 list->Object[]
+如果我们获取的是部分属性，我们取的是list->Object[]
+如果我们获取的是全部属性，我们取的是list->Student
+
+
+
+参数绑定有两种形式：
+Query q=session.createQuery(from Student where sdept=:dept and sage>:age);
+
+List<Student> list=session.createQuery("from Student where sdept=:a1 and sage>:sage")
+			.setString("a1", "计算机系").setString("sage", "2").list();
+----------------------------------------------------------------------------
+还有一种形式:
+Query q=session.createQuery(from Student where sdept=? and sage>?);
+List<Student> list=session.createQuery("from Student where sdept=? and sage>?")
+			.setString(0, "计算机系").setString(1, "2").list();
+
+
+hibernate的三种状态：
+主要的依据是: 1. 看该对象是否处于session, 2, 看在数据库中有没有对应的记录
+瞬时态: 没有session管理,同时数据库没有对应记录
+持久态: 有session管理，同时在数据库中有记录
+脱管态/游离态： 没有session管理，但是在数据库中有记录.
+
+懒加载:
+简述: 当我们查询一个对象的时候，在默认情况下,返回的只是该对象的普通属性,当用户去使用对象属性时，才会向数据库发出再一次的查询.这种现象我们称为 lazy现象.
+解决方法可以这样:
+1.显示初始化 Hibernate.initized(代理对象)
+2.修改对象关系文件 lazy  改写 lazy=false
+3.通过过滤器(web项目) openSessionInView
+
+
+一、一级缓存二级缓存的概念解释
+（1）一级缓存就是Session级别的缓存，一个Session做了一个查询操作，它会把这个操作的结果放在一级缓存中，如果短时间内这个
+session（一定要同一个session）又做了同一个操作，那么hibernate直接从一级缓存中拿，而不会再去连数据库，取数据；
+
+（2）二级缓存就是SessionFactory级别的缓存，顾名思义，就是查询的时候会把查询结果缓存到二级缓存中，如果同一个sessionFactory
+创建的某个session执行了相同的操作，hibernate就会从二级缓存中拿结果，而不会再去连接数据库；
+
+（3）Hibernate中提供了两级Cache，第一级别的缓存是Session级别的缓存，它是属于事务范围的缓存。这一级别的缓存由hibernate管理
+的，一般情况下无需进行干预；第二级别的缓存是SessionFactory级别的缓存，它是属于进程范围或群集范围的缓存。这一级别的缓
+存可以进行配置和更改，并且可以动态加载和卸载。 Hibernate还为查询结果提供了一个查询缓存，它依赖于第二级缓存；
+
+
+
+
+
+数据库语句：
+
+--建立学生表
+create table student
+(sid number primary key , --这是学生的学号
+sname varchar2(45) not null, --学生姓名
+ssex  char(2) not null,--性别
+sdept varchar2(10) not null, --所在系
+sage  number(3) ,--年龄
+saddress varchar2(45) --住址
+)
+--创建序列
+create sequence stu_seq
+start with 20170001
+increment by 1
+nomaxvalue
+nocycle
+
+--学生表中的数据
+insert into student values(20040001,'林青霞','F','计算机系',22,'上海');
+insert into student values(20040002,'刘德华','M','外语系',23,'南京');
+insert into student values(20050003,'成龙','M','化学系',21,'山东');
+insert into student values(20050004,'林可欣','F','计算机系',22,'北京');
+insert into student values(20050005,'周华健','M','生物系',24,'山东');
+insert into student values(20050006,'周润发','M','数学系',20,'湖北');
+
+--建立课程表
+create table course
+(
+cid number primary key ,--这是课程号
+cname varchar2(50) not null,--课程名
+ccredit number(3) --课程学分
+)
+
+insert into course values(11,'java编程',6);
+insert into course values(21,'c++课程',4);
+insert into course values(31,'oracle',3);
+insert into course values(41,'javaEE',100);
+insert into course values(51,'linux',1);
+
+--创建序列
+create sequence course_seq
+start with 60
+increment by 1
+nomaxvalue
+nocycle
+
+--建立选课表
+create table studCourse
+(
+stuCourseId number primary key ,--这是一个自增的,表示一次选课
+sid number  references student(sid),--学生号
+cid number references course(cid),--课程号
+grade number not null--成绩
+)
+
+--创建序列
+create sequence stucourse_seq
+start with 1
+increment by 1
+nomaxvalue
+nocycle
+
+--初始化数据
+insert into studCourse values(stucourse_seq.nextval,20040001,11,90);
+insert into studCourse values(stucourse_seq.nextval,20040001,21,19);
+insert into studCourse values(stucourse_seq.nextval,20050003,21,45);
+insert into studCourse values(stucourse_seq.nextval,20050004,41,99);
+insert into studCourse values(stucourse_seq.nextval,20050006,11,39);
+
+select student0_.sid as sid2_, student0_.sname as sname2_, student0_.ssex as ssex2_, student0_.sdept as sdept2_, student0_.sage as sage2_, student0_.saddress as saddress2_ from student student0_
