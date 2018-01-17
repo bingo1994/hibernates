@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<!-- 该文件用于配置连接数据的种类,用户名，密码,ul ,驱动.. 连接池,二级缓存.. 有点类似strus  struts-config.xml -->
+
+<hibernate-configuration>
+<session-factory>
+<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+	<property name="connection.url">jdbc:mysql:///test</property><!--jdbc:mysql://localhost:3306/test  -->
+		<property name="connection.username">root</property>
+		<property name="connection.password">1111</property>
+		<!--  配置dialect方言,明确告诉hibernate连接是哪种数据库/ -->
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<!-- 配置显示hibernate生成的 sql ,特别说明，在开发阶段设为true利于调试，在使用项目则设为false-->
+		<property name="show_sql">true</property>
+		
+		<!--hbm2ddl.atuo 这个属性可以帮你自动完成 类-映射文件-数据库
+		让hibernate给我们自动创建表  create:如果没有表建创建表，如果有表就删除原表再创建新的表
+		update：如果没有表就创建新的表，如果有表，表的结构发生改变就删除再重新创建
+		-->
+		<property name="hbm2ddl.auto" >update</property>		
+
+		<!-- 指定管理的对象映射文件 -->
+		<mapping resource="com/test/domain/Employee.hbm.xml"/>
+</session-factory>
+
+</hibernate-configuration>
