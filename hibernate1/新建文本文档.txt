@@ -1,0 +1,45 @@
+hibernate的第一个java项目
+重要的类：Configuration
+重要的接口：SessionFactory、Session、Transaction
+
+添加步骤：
+1.得到Configuration(类)
+2.得到SessionFactory(会话工厂，这是一个重量级的类，因此要保证在一个应用程序中只能有一个)
+3.从SessionFactory中取出一个Session对象(它表示 和数据库的出一次会话)	
+4.开始一个事务
+5.保存一个对象到数据库(持久化一个对象)  session.save(emp);
+6.事务提交
+
+修改、删除：
+1.得到Configuration(类)
+2.得到SessionFactory(会话工厂，这是一个重量级的类，因此要保证在一个应用程序中只能有一个)
+3.从SessionFactory中取出一个Session对象(它表示 和数据库的出一次会话)	
+4.开始一个事务
+5.修改/删除,先根据id得到这个对象，需要强转一下，再修改/删除  session.load(Employee.class, 1); -->  emp.setName("小名");/session.delete(emp);
+6.事务提交
+
+
+
+SessionFactory 获取 Session的两个方法 openSession() 一个 getCurrentSession();
+二者区别：
+1.	openSession() 是获取一个新的session
+2.	getCurrentSession () 获取和当前线程绑定的session,换言之，在同一个线程中，我们获取的session是同一session,这样可以利于事务控制
+(如果希望使用 getCurrentSession 需要配置 hibernate.cfg.xml中配置.)
+3.	如何选择
+原则:
+	①如果需要在同一线程中，保证使用同一个Session则，使用getCurrentSession()
+	②如果在一个线程中，需要使用不同的Session,则使用opentSession()
+4.	通过 getCurrentSession() 获取的session在事务提交后，会自动关闭，通过openSession()获取的session则必须手动关闭
+5.	如果是通过getCurrentSession() 获取 sesssion ,进行查询需要事务提交.
+
+
+get()与load()的区别：
+1.	如果查询不到数据，get 会返回 null,但是不会报错, load 如果查询不到数据，则报错ObjectNotFoundException
+2.	使用get 去查询数据，(先到一级/二级)会立即向db发出查询请求(select ...), 如果你使用的是 load查询数据，(先到一级、二级))即使查询到对象，返回的是一个代理对象,如果后面没有使用查询结果，它不会真的向数据库发select ,
+当程序员使用查询结果的时候才真的发出select ,这个现象我们称为懒加载(lazy)
+3.	通过修改配置文件，我们可以取消懒加载
+	<class  name="Employee" lazy="false" table="employee">
+4.	如何选择使用哪个: 如果你确定DB中有这个对象就用load(),不确定就用get()（这样效率高）
+
+
+query接口与criteria 接口都可实现语句的查询

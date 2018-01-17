@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<!-- 该文件用于配置连接数据的种类,用户名，密码,ul ,驱动.. 连接池,二级缓存.. 有点类似strus  struts-config.xml -->
+
+<hibernate-configuration>
+<session-factory>
+		<property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+		<property name="connection.url">jdbc:oracle:thin:@localhost:1521:orcl</property>
+		<property name="connection.username">lisi</property>
+		<property name="connection.password">123</property>
+		<!-- 配置显示hibernate生成的 sql ,特别说明，在开发阶段设为true利于调试，在使用项目则设为false-->
+		<property name="show_sql">true</property>
+		<property name="format_sql">true</property>
+		<!--  配置dialect方言,明确告诉hibernate连接是哪种数据库/ -->
+		<property name="dialect">org.hibernate.dialect.OracleDialect</property>
+		
+		<!-- 下面的配置表示支持 通过 getCurrentSession()获取session
+		这样session在通过一线程中始终是一个，这样利于事务的控制 -->
+		<!-- <property name="current_session_context_class">thread</property> -->
+		
+		<!-- 指定管理的对象映射文件 -->
+		<mapping resource="com/test/domain/Employee.hbm.xml"/>
+</session-factory>
+
+</hibernate-configuration>
